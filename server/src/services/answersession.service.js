@@ -17,8 +17,8 @@ class AnswerSessionService {
     return AnswerSession.create({ sessionId, questionId });
   }
 
-  static async updateAnswerSession(id, { userAnswer }) {
-    await AnswerSession.update({ userAnswer }, { where: { id } });
+  static async updateAnswerSession(id, { userAnswer, isCorrect, answerScore }) {
+    await AnswerSession.update({ userAnswer, isCorrect, answerScore }, { where: { id } });
 
     return AnswerSession.findByPk(id);
   }
