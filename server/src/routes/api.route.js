@@ -1,12 +1,18 @@
 const express = require('express');
 const authRouter = require('./auth.route');
 const userRouter = require('./user.route');
-const skeletRouter = require('./skelet.route');
+const themeRouter = require('./theme.route');
+const questionRouter = require('./question.route');
+const sessionRouter = require('./session.route');
+const answerSessionRouter = require('./answersession.route');
 
 const router = express.Router();
 
 router.use('/auth', authRouter);
 router.use('/user', userRouter);
-router.use('/skelets', skeletRouter);
+router.use('/theme', themeRouter);
+router.use('/question', questionRouter);
+router.use('/session', sessionRouter);
+router.use('/answersession', answerSessionRouter);
 
 module.exports = router;

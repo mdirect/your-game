@@ -1,52 +1,26 @@
-import { useState, type JSX } from "react";
-import { BrowserRouter, Routes, Route } from "react-router";
 import "./App.css";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import Layout from "./app/Layout/Layout";
+import MainPage from "./pages/MainPage/MainPage";
+import RegisterPage from "./pages/RegisterPage/RegisterPage";
+import LoginPage from "./pages/LoginPage/LoginPage";
 import PageAnswer from "./pages/pageAnswer/PageAnswer";
+import ResultPage from "./pages/ResultPage/ResultPage";
 
-function App(): JSX.Element {
-  const [currentQuestion] = useState<string>("Сколько будет 2+2?");
-  const [isAnswerPageOpen, setIsAnswerPageOpen] = useState<boolean>(true);
-
-  const handleSubmitAnswer = (answer: string): void => {
-    console.log("Ответ пользователя:", answer);
-    // Здесь можно добавить логику обработки ответа
-    alert(`Ваш ответ: ${answer}`);
-  };
-
-  const handleCloseAnswer = (): void => {
-    setIsAnswerPageOpen(false);
-  };
-
+export default function App() {
   return (
-    <>
-      <BrowserRouter>
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <PageAnswer
-                question={currentQuestion}
-                isOpen={isAnswerPageOpen}
-                onSubmit={handleSubmitAnswer}
-                onClose={handleCloseAnswer}
-              />
-            }
-          />
-          <Route
-            path="/answer"
-            element={
-              <PageAnswer
-                question={currentQuestion}
-                isOpen={isAnswerPageOpen}
-                onSubmit={handleSubmitAnswer}
-                onClose={handleCloseAnswer}
-              />
-            }
-          />
-        </Routes>
-      </BrowserRouter>
-    </>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<RegisterPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route element={<Layout />}>
+          <Route path="/game" element={<MainPage />} />
+          <Route path="/question/:themesId/:cost" element={<PageAnswer />} />
+          <Route path="/result" element={<ResultPage />} />
+        </Route>
+      </Routes>
+    </BrowserRouter>
   );
 }
-
-export default App;
