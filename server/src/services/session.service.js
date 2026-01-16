@@ -1,4 +1,4 @@
-const { Session, AnswerSession } = require('../../db/models');
+const { Session, AnswerSession, Question } = require('../../db/models');
 
 class SessionService {
   static async getSessions(id) {
@@ -10,6 +10,7 @@ class SessionService {
   }
 
   static async createSession({ userId }) {
+    await Question.update({ isAnswered: false }, { where: {} });
     return Session.create({
       userId,
       score: 0,
@@ -32,6 +33,7 @@ class SessionService {
     const totalAnswers = answers.filter((a) => a.userAnswer).length;
     const rigthQuestion = answers.filter((a) => a.isCorrect).length;
     const score = answers.reduce((sum, a) => sum + (a.answerScore || 0), 0);
+    const questionIds = answers.map((a) => a.questionId).filter(Boolean);
 
     await Session.update(
       {
@@ -42,6 +44,13 @@ class SessionService {
       },
       { where: { id } },
     );
+
+    if (questionIds.length) {
+      await Question.update(
+        { isAnswered: false },
+        { where: { id: questionIds } },
+      );
+    }
 
     return Session.findByPk(id);
   }

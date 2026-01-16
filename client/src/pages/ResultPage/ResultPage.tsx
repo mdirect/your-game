@@ -1,7 +1,9 @@
 import { useEffect, useState, type JSX } from "react";
+import { useNavigate } from "react-router-dom";
 import "./ResultPage.css";
 import { fetchSessionById, type SessionDto } from "../../entities/game/gameApi";
-import { getSessionId } from "../../shared/lib/gameSessionStorage";
+import { clearSessionId, getSessionId } from "../../shared/lib/gameSessionStorage";
+import { resetGameTimer } from "../../shared/hooks/useGameTimer";
 
 type ResultPageProps = {
   playerName?: string;
@@ -18,6 +20,7 @@ export default function ResultPage({
   time,
   onRestart,
 }: ResultPageProps): JSX.Element {
+  const navigate = useNavigate();
   const sessionId = getSessionId();
   const [session, setSession] = useState<SessionDto | null>(null);
 
@@ -90,7 +93,16 @@ export default function ResultPage({
 
         <button
           className="result-restart"
-          onClick={onRestart ?? (() => (window.location.href = "/"))}
+          onClick={
+            onRestart ??
+            (() => {
+              if (sessionId) {
+                resetGameTimer(sessionId);
+              }
+              clearSessionId();
+              navigate("/game");
+            })
+          }
         >
           Начать заново
         </button>
