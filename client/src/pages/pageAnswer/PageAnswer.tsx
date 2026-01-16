@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { JSX, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router";
 import "./PageAnswer.css";
 import { fetchQuestionByThemeAndCost } from "../../entities/game/gameApi";
 import { useGameTimer } from "../../shared/hooks/useGameTimer";
@@ -24,7 +24,7 @@ type QuestionState = {
   answer: string;
 };
 
-export default function PageAnswer() {
+export default function PageAnswer(): JSX.Element {
   const navigate = useNavigate();
   const { themesId, cost } = useParams();
   const { remainingMs, isExpired } = useGameTimer();

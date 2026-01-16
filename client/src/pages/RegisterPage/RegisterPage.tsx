@@ -1,5 +1,5 @@
-import { useState, type ChangeEvent, type FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { JSX, useState, type ChangeEvent, type FormEvent } from "react";
+import { useNavigate } from "react-router";
 
 import "./RegisterPage.css";
 import UserApi from "../../entities/user/api/UserApi";
@@ -17,18 +17,18 @@ const INITIAL_STATE: FormState = {
   password: "",
 };
 
-export default function RegisterPage() {
+export default function RegisterPage(): JSX.Element {
   const navigate = useNavigate();
   const [form, setForm] = useState<FormState>(INITIAL_STATE);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  function handleChange(event: ChangeEvent<HTMLInputElement>) {
+  function handleChange(event: ChangeEvent<HTMLInputElement>) : void{
     const { name, value } = event.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   }
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>): Promise<void> {
     event.preventDefault();
     setError(null);
 
