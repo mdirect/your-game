@@ -1,23 +1,20 @@
 import { useState, type ChangeEvent, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 
-import "./RegisterPage.css";
+import "./LoginPage.css";
 import UserApi from "../../entities/user/api/UserApi";
 import { setAccessToken } from "../../shared/lib/axiosInstance";
 
 type FormState = {
-  name: string;
   email: string;
   password: string;
 };
 
 const INITIAL_STATE: FormState = {
-  name: "",
   email: "",
   password: "",
 };
-
-export default function RegisterPage() {
+export default function LoginPage() {
   const navigate = useNavigate();
   const [form, setForm] = useState<FormState>(INITIAL_STATE);
   const [error, setError] = useState<string | null>(null);
@@ -34,8 +31,7 @@ export default function RegisterPage() {
 
     try {
       setIsSubmitting(true);
-      const data = await UserApi.signup({
-        name: form.name.trim(),
+      const data = await UserApi.login({
         email: form.email.trim(),
         password: form.password,
       });
@@ -51,9 +47,7 @@ export default function RegisterPage() {
         message?: string;
       };
       const message =
-        maybeErr?.response?.data ??
-        maybeErr?.message ??
-        "Не удалось зарегистрироваться";
+        maybeErr?.response?.data ?? maybeErr?.message ?? "Не удалось войти";
       setError(String(message));
     } finally {
       setIsSubmitting(false);
@@ -61,24 +55,11 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="register-page">
-      <div className="register-card">
-        <h1 className="register-title">Регистрация</h1>
-        <form className="register-form" onSubmit={handleSubmit}>
-          <label className="register-field">
-            <span>Имя</span>
-            <input
-              name="name"
-              type="text"
-              value={form.name}
-              onChange={handleChange}
-              placeholder="Ваше имя"
-              autoComplete="name"
-              required
-            />
-          </label>
-
-          <label className="register-field">
+    <div className="login-page">
+      <div className="login-card">
+        <h1 className="login-title">Вход</h1>
+        <form className="login-form" onSubmit={handleSubmit}>
+          <label className="login-field">
             <span>Email</span>
             <input
               name="email"
@@ -91,7 +72,7 @@ export default function RegisterPage() {
             />
           </label>
 
-          <label className="register-field">
+          <label className="login-field">
             <span>Пароль</span>
             <input
               name="password"
@@ -99,26 +80,18 @@ export default function RegisterPage() {
               value={form.password}
               onChange={handleChange}
               placeholder="Введите пароль"
-              autoComplete="new-password"
+              autoComplete="current-password"
               required
             />
           </label>
 
-          {error && <div className="register-error">{error}</div>}
-
+          {error && <div className="login-error">{error}</div>}
           <button
-            className="register-submit"
+            className="login-submit"
             type="submit"
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Создаём аккаунт..." : "Зарегистрироваться"}
-          </button>
-          <button
-            className="register-link"
-            type="button"
-            onClick={() => navigate("/login")}
-          >
-            Уже есть аккаунт? Войти
+            {isSubmitting ? "Входим..." : "Войти"}
           </button>
         </form>
       </div>
