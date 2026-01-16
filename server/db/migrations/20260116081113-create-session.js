@@ -35,6 +35,7 @@ module.exports = {
       rigthQuestion: {
         allowNull: false,
         type: Sequelize.INTEGER,
+        defaultValue: 0,
       },
       totalAnswers: {
         allowNull: false,
