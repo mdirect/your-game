@@ -7,6 +7,7 @@ import {
   getSessionId,
 } from "../../shared/lib/gameSessionStorage";
 import { resetGameTimer } from "../../shared/hooks/useGameTimer";
+import axiosInstance, { setAccessToken } from "../../shared/lib/axiosInstance";
 
 type ResultPageProps = {
   playerName?: string;
@@ -26,6 +27,7 @@ export default function ResultPage({
   const navigate = useNavigate();
   const sessionId = getSessionId();
   const [session, setSession] = useState<SessionDto | null>(null);
+  const [userLabel, setUserLabel] = useState<string | null>(null);
 
   useEffect(() => {
     if (!sessionId) return;
@@ -33,6 +35,18 @@ export default function ResultPage({
       .then((data) => setSession(data))
       .catch(() => setSession(null));
   }, [sessionId]);
+
+  useEffect(() => {
+    axiosInstance("/api/auth/refreshToken")
+      .then(({ data }) => {
+        if (data?.accessToken) setAccessToken(data.accessToken);
+        const label = data?.user?.name || data?.user?.email;
+        if (label) setUserLabel(label);
+      })
+      .catch(() => {
+        setUserLabel(null);
+      });
+  }, []);
 
   const total = totalQuestions ?? session?.totalAnswers ?? 0;
   const correct = correctAnswers ?? session?.rigthQuestion ?? 0;
@@ -76,7 +90,7 @@ export default function ResultPage({
         <div className="result-block">
           <div className="result-line">
             <span>Игрок:</span>
-            <strong>{playerName || "Игрок"}</strong>
+            <strong>{playerName || userLabel || "Игрок"}</strong>
           </div>
           <div className="result-line">
             <span>Вопросов:</span>
