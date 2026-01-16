@@ -57,7 +57,7 @@ export default class UserValidate {
     };
   }
 
-  static validateSignUpData({ name, email, password, confirmPassword }) {
+  static validateSignUpData({ name, email, password }) {
     if (!name || typeof name !== "string" || name.trim().length === 0) {
       return {
         isValid: false,
@@ -87,13 +87,6 @@ export default class UserValidate {
         isValid: false,
         error:
           "Пароль не должен быть пустым, должен содержать одну большую букву, одну маленькую, один специальный символ, и не должен быть короче 8 символов",
-      };
-    }
-
-    if (password !== confirmPassword) {
-      return {
-        isValid: false,
-        error: "Пароли не совпадают",
       };
     }
 

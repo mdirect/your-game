@@ -1,6 +1,10 @@
-import { useState, type JSX } from "react";
-import { BrowserRouter, Routes, Route } from "react-router";
 import "./App.css";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+
+import Layout from "./app/Layout/Layout";
+import MainPage from "./pages/MainPage/MainPage";
+import RegisterPage from "./pages/RegisterPage/RegisterPage";
+import LoginPage from "./pages/LoginPage/LoginPage";
 import PageAnswer from "./pages/pageAnswer/PageAnswer";
 import ResultPage from "./pages/ResultPage/ResultPage";
 
@@ -78,5 +82,3 @@ function App(): JSX.Element {
     </>
   );
 }
-
-export default App;
