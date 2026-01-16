@@ -4,6 +4,12 @@ import { useNavigate } from "react-router-dom";
 import "./LoginPage.css";
 import UserApi from "../../entities/user/api/UserApi";
 import { setAccessToken } from "../../shared/lib/axiosInstance";
+import {
+  clearAnsweredCells,
+  clearSessionId,
+  getSessionId,
+} from "../../shared/lib/gameSessionStorage";
+import { resetGameTimer } from "../../shared/hooks/useGameTimer";
 
 type FormState = {
   email: string;
@@ -39,6 +45,13 @@ export default function LoginPage() {
       if (data?.accessToken) {
         setAccessToken(data.accessToken);
       }
+
+      const existingSessionId = getSessionId();
+      if (existingSessionId) {
+        clearAnsweredCells(existingSessionId);
+        resetGameTimer(existingSessionId);
+      }
+      clearSessionId();
 
       navigate("/game");
     } catch (err: unknown) {

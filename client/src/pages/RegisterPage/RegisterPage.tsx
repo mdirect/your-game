@@ -4,6 +4,12 @@ import { useNavigate } from "react-router";
 import "./RegisterPage.css";
 import UserApi from "../../entities/user/api/UserApi";
 import { setAccessToken } from "../../shared/lib/axiosInstance";
+import {
+  clearAnsweredCells,
+  clearSessionId,
+  getSessionId,
+} from "../../shared/lib/gameSessionStorage";
+import { resetGameTimer } from "../../shared/hooks/useGameTimer";
 
 type FormState = {
   name: string;
@@ -23,12 +29,14 @@ export default function RegisterPage(): JSX.Element {
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  function handleChange(event: ChangeEvent<HTMLInputElement>) : void{
+  function handleChange(event: ChangeEvent<HTMLInputElement>): void {
     const { name, value } = event.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   }
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>): Promise<void> {
+  async function handleSubmit(
+    event: FormEvent<HTMLFormElement>
+  ): Promise<void> {
     event.preventDefault();
     setError(null);
 
@@ -43,6 +51,13 @@ export default function RegisterPage(): JSX.Element {
       if (data?.accessToken) {
         setAccessToken(data.accessToken);
       }
+
+      const existingSessionId = getSessionId();
+      if (existingSessionId) {
+        clearAnsweredCells(existingSessionId);
+        resetGameTimer(existingSessionId);
+      }
+      clearSessionId();
 
       navigate("/game");
     } catch (err: unknown) {

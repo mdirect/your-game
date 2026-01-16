@@ -3,6 +3,12 @@ import { useEffect, useState } from "react";
 
 import Navigation from "../../widgets/Navigation/Navigation";
 import axiosInstance, { setAccessToken } from "../../shared/lib/axiosInstance";
+import {
+  clearAnsweredCells,
+  clearSessionId,
+  getSessionId,
+} from "../../shared/lib/gameSessionStorage";
+import { resetGameTimer } from "../../shared/hooks/useGameTimer";
 
 type User = {
   id: number;
@@ -35,10 +41,16 @@ export default function Layout() {
   async function handleLogout() {
     try {
       // TODO BACKEND: если у вас другой урл — поменять тут
-      await axiosInstance.post("/api/auth/logout");
+      await axiosInstance.get("/api/auth/logout");
     } catch (_) {
       // даже если бек упал — локально чистим
     } finally {
+      const existingSessionId = getSessionId();
+      if (existingSessionId) {
+        clearAnsweredCells(existingSessionId);
+        resetGameTimer(existingSessionId);
+      }
+      clearSessionId();
       setAccessToken("");
       setUser(null);
       navigate("/register");

@@ -5,57 +5,64 @@ const GAME_TIMER_PAUSED_AT_KEY = "gameTimerPausedAt";
 const GAME_TIMER_PAUSED_TOTAL_KEY = "gameTimerPausedTotal";
 const GAME_DURATION_MS = 20 * 60 * 1000;
 
-function getStartTime(): number {
-  const raw = localStorage.getItem(GAME_TIMER_KEY);
+function getKey(base: string, sessionId?: string | number | null) {
+  return sessionId ? `${base}:${sessionId}` : base;
+}
+
+function getStartTime(sessionId?: string | number | null): number {
+  const key = getKey(GAME_TIMER_KEY, sessionId);
+  const raw = localStorage.getItem(key);
   if (raw) {
     const parsed = Number(raw);
     if (!Number.isNaN(parsed)) return parsed;
   }
   const now = Date.now();
-  localStorage.setItem(GAME_TIMER_KEY, String(now));
+  localStorage.setItem(key, String(now));
   return now;
 }
 
-export function resetGameTimer() {
-  localStorage.removeItem(GAME_TIMER_KEY);
-  localStorage.removeItem(GAME_TIMER_PAUSED_AT_KEY);
-  localStorage.removeItem(GAME_TIMER_PAUSED_TOTAL_KEY);
+export function resetGameTimer(sessionId?: string | number | null) {
+  localStorage.removeItem(getKey(GAME_TIMER_KEY, sessionId));
+  localStorage.removeItem(getKey(GAME_TIMER_PAUSED_AT_KEY, sessionId));
+  localStorage.removeItem(getKey(GAME_TIMER_PAUSED_TOTAL_KEY, sessionId));
 }
 
-export function useGameTimer() {
+export function useGameTimer(sessionId?: string | number | null) {
+  const pausedAtKey = getKey(GAME_TIMER_PAUSED_AT_KEY, sessionId);
+  const pausedTotalKey = getKey(GAME_TIMER_PAUSED_TOTAL_KEY, sessionId);
   const [isPaused, setIsPaused] = useState(() => {
-    const pausedAt = localStorage.getItem(GAME_TIMER_PAUSED_AT_KEY);
+    const pausedAt = localStorage.getItem(pausedAtKey);
     return Boolean(pausedAt);
   });
   const [remainingMs, setRemainingMs] = useState(() => {
-    const start = getStartTime();
-    const pausedTotal = Number(localStorage.getItem(GAME_TIMER_PAUSED_TOTAL_KEY) || 0);
-    const pausedAt = Number(localStorage.getItem(GAME_TIMER_PAUSED_AT_KEY) || 0);
+    const start = getStartTime(sessionId);
+    const pausedTotal = Number(localStorage.getItem(pausedTotalKey) || 0);
+    const pausedAt = Number(localStorage.getItem(pausedAtKey) || 0);
     const now = pausedAt || Date.now();
     const elapsed = now - start - pausedTotal;
     return Math.max(GAME_DURATION_MS - elapsed, 0);
   });
 
   function togglePause() {
-    const pausedAtRaw = localStorage.getItem(GAME_TIMER_PAUSED_AT_KEY);
+    const pausedAtRaw = localStorage.getItem(pausedAtKey);
     if (pausedAtRaw) {
       const pausedAt = Number(pausedAtRaw);
-      const pausedTotal = Number(localStorage.getItem(GAME_TIMER_PAUSED_TOTAL_KEY) || 0);
+      const pausedTotal = Number(localStorage.getItem(pausedTotalKey) || 0);
       const nextTotal = pausedTotal + (Date.now() - pausedAt);
-      localStorage.setItem(GAME_TIMER_PAUSED_TOTAL_KEY, String(nextTotal));
-      localStorage.removeItem(GAME_TIMER_PAUSED_AT_KEY);
+      localStorage.setItem(pausedTotalKey, String(nextTotal));
+      localStorage.removeItem(pausedAtKey);
       setIsPaused(false);
     } else {
-      localStorage.setItem(GAME_TIMER_PAUSED_AT_KEY, String(Date.now()));
+      localStorage.setItem(pausedAtKey, String(Date.now()));
       setIsPaused(true);
     }
   }
 
   useEffect(() => {
     const intervalId = setInterval(() => {
-      const start = getStartTime();
-      const pausedTotal = Number(localStorage.getItem(GAME_TIMER_PAUSED_TOTAL_KEY) || 0);
-      const pausedAt = Number(localStorage.getItem(GAME_TIMER_PAUSED_AT_KEY) || 0);
+      const start = getStartTime(sessionId);
+      const pausedTotal = Number(localStorage.getItem(pausedTotalKey) || 0);
+      const pausedAt = Number(localStorage.getItem(pausedAtKey) || 0);
       const now = pausedAt || Date.now();
       const elapsed = now - start - pausedTotal;
       const next = Math.max(GAME_DURATION_MS - elapsed, 0);
@@ -67,7 +74,7 @@ export function useGameTimer() {
     }, 1000);
 
     return () => clearInterval(intervalId);
-  }, []);
+  }, [sessionId, pausedAtKey, pausedTotalKey]);
 
   return {
     remainingMs,
@@ -76,4 +83,3 @@ export function useGameTimer() {
     togglePause,
   };
 }
-

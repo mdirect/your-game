@@ -8,7 +8,7 @@ type Props = {
 export default function Navigation({ userName, onLogout }: Props) {
   return (
     <header className="game-navbar">
-      <div className="nav-left">Привет {userName}</div>
+      <div className="nav-left">Привет, {userName}</div>
 
       <div className="nav-center">Своя игра</div>
 

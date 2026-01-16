@@ -10,7 +10,12 @@ class SessionService {
   }
 
   static async createSession({ userId }) {
-    return Session.create({ userId });
+    return Session.create({
+      userId,
+      score: 0,
+      rigthQuestion: 0,
+      totalAnswers: 0,
+    });
   }
 
   static async updateSession(id, { endTime, score, rigthQuestion, totalAnswers }) {

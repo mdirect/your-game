@@ -27,6 +27,26 @@ export type QuestionDetailsDto = {
   image?: string | null;
 };
 
+export type SessionDto = {
+  id: number;
+  userId: number;
+  startTime: string;
+  endTime?: string | null;
+  score: number;
+  rigthQuestion: number;
+  totalAnswers: number;
+};
+
+export type AnswerSessionDto = {
+  id: number;
+  sessionId: number;
+  questionId: number;
+  startTime?: string | null;
+  userAnswer?: string | null;
+  isCorrect?: boolean | null;
+  answerScore?: number | null;
+};
+
 export async function fetchBoard(): Promise<BoardDto> {
   const [themesRes, questionsRes] = await Promise.all([
     axiosInstance.get<ThemeDto[]>("/api/theme"),
@@ -60,4 +80,30 @@ export async function fetchQuestionByThemeAndCost(
   );
 
   return data?.[0] ?? null;
+}
+
+export async function createSession(): Promise<SessionDto> {
+  const { data } = await axiosInstance.post<SessionDto>("/api/session");
+  return data;
+}
+
+export async function createAnswerSession(
+  sessionId: number,
+  questionId: number
+): Promise<AnswerSessionDto> {
+  const { data } = await axiosInstance.post<AnswerSessionDto>(
+    `/api/answersession?sessionId=${sessionId}&questionId=${questionId}`
+  );
+  return data;
+}
+
+export async function updateAnswerSession(
+  answerSessionId: number,
+  userAnswer: string
+): Promise<AnswerSessionDto> {
+  const { data } = await axiosInstance.put<AnswerSessionDto>(
+    `/api/answersession/${answerSessionId}`,
+    { userAnswer }
+  );
+  return data;
 }

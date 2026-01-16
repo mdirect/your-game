@@ -10,7 +10,9 @@ export default class UserApi {
     email: string;
     password: string;
   }): Promise<AuthResponse>;
-  static login(userData: { email: string; password: string }): Promise<AuthResponse>;
+  static login(userData: {
+    email: string;
+    password: string;
+  }): Promise<AuthResponse>;
   static logout(): Promise<AuthResponse>;
 }
-
