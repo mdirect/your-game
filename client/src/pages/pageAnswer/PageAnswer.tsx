@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { JSX, useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router";
 import "./PageAnswer.css";
 import { fetchQuestionByThemeAndCost } from "../../entities/game/gameApi";
 
@@ -7,7 +7,7 @@ type QuestionState = {
   question: string;
 };
 
-export default function PageAnswer() {
+export default function PageAnswer(): JSX.Element {
   const navigate = useNavigate();
   const { themesId, cost } = useParams();
   const [answer, setAnswer] = useState<string>("");
