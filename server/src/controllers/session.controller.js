@@ -1,5 +1,6 @@
 const SessionService = require('../services/session.service');
-const { Session } = require('../../db/models');
+const AnswerSessionService = require('../services/answersession.service');
+const QuestionService = require('../services/question.service');
 
 class SessionController {
   static async getAllSessions(req, res) {
@@ -50,14 +51,23 @@ class SessionController {
 
       if (!session) return res.status(200).send('Такой сессии нет');
       if (user.id !== session.userId) return res.status(400).send('Это не ваша сессия');
-      // TODO:     добавить заполнение колонок endTime, score, rigthQuestion, totalAnswers 
+      const answersArr = await AnswerSessionService.getAnswerSessionBySessionId(id);
+      const answers = JSON.parse(JSON.stringify(answersArr, null, 2));
+      let rigthQuestion = 0;
+      let score = 0;
 
-      const updateSession = await SessionService.updateSession(id, {
-        score: 1000,
-        endTime: Date.now(),
-        rigthQuestion: 10,
-        totalAnswers: 25,
+      answers.forEach((answer) => {
+        if (answer.isCorrect) rigthQuestion++;
+        score += answer.answerScore;
       });
+      const updateSession = await SessionService.updateSession(id, {
+        score,
+        endTime: Date.now(),
+        rigthQuestion,
+        totalAnswers: answers.length,
+      });
+
+      answers.map((answer) => QuestionService.changeStatusIsAnswered(answer.id));
 
       return res.status(200).json(updateSession);
     } catch (error) {
