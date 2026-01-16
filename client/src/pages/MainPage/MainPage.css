@@ -19,10 +19,16 @@
   /* timer above board (right) */
   .gameHeader {
     display: grid;
-    grid-template-columns: 1fr auto;
+  grid-template-columns: 1fr auto;
     align-items: center;
     margin-bottom: 12px;
   }
+
+.timerControls {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
   
   .timerBtn {
     background: rgba(10, 30, 80, 0.45);

@@ -2,18 +2,38 @@ import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./mainPage.css";
 import { fetchBoard, type BoardDto, type QuestionDto } from "../../entities/game/gameApi";
+import { useGameTimer } from "../../shared/hooks/useGameTimer";
 
 const COSTS = [100, 200, 300, 400, 500];
+const ANSWERED_STORAGE_KEY = "answeredCells";
+
+function loadAnsweredCells(): Set<string> {
+  try {
+    const raw = localStorage.getItem(ANSWERED_STORAGE_KEY);
+    if (!raw) return new Set();
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return new Set();
+    return new Set(parsed.filter((item) => typeof item === "string"));
+  } catch {
+    return new Set();
+  }
+}
 
 export default function MainPage() {
   const navigate = useNavigate();
+  const { remainingMs, isExpired, isPaused, togglePause } = useGameTimer();
   const [board, setBoard] = useState<BoardDto | null>(null);
   const [loading, setLoading] = useState(true);
+  const [answeredCells, setAnsweredCells] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     fetchBoard()
       .then((data) => setBoard(data))
       .finally(() => setLoading(false));
+  }, []);
+
+  useEffect(() => {
+    setAnsweredCells(loadAnsweredCells());
   }, []);
 
   // быстрый доступ к question по (themeId+cost)
@@ -30,8 +50,11 @@ export default function MainPage() {
     navigate(`/question/${q.themeId}/${q.cost}`);
   }
 
-  function handleTimerClick() {
-    console.log("timer");
+  function formatTime(ms: number) {
+    const totalSeconds = Math.ceil(ms / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    return `${minutes}:${seconds.toString().padStart(2, "0")}`;
   }
 
   if (loading) {
@@ -56,9 +79,19 @@ export default function MainPage() {
       <div className="screen">
         <div className="gameHeader">
           <div />
-          <button className="timerBtn" type="button" onClick={handleTimerClick}>
-            таймер
-          </button>
+          <div className="timerControls">
+            <button
+              className="timerBtn"
+              type="button"
+              onClick={togglePause}
+              disabled={isExpired}
+            >
+              {isPaused ? "продолжить" : "пауза"}
+            </button>
+            <button className="timerBtn" type="button" disabled>
+              {isExpired ? "время вышло" : `таймер ${formatTime(remainingMs)}`}
+            </button>
+          </div>
         </div>
 
         <div className="boardFrame">
@@ -69,7 +102,9 @@ export default function MainPage() {
 
                 {COSTS.map((cost) => {
                   const q = qMap.get(`${t.id}:${cost}`);
-                  const disabled = !q || q.isAnswered;
+                  const key = `${t.id}:${cost}`;
+                  const disabled =
+                    isExpired || !q || q.isAnswered || answeredCells.has(key);
 
                   return (
                     <button
@@ -79,7 +114,7 @@ export default function MainPage() {
                       disabled={disabled}
                       onClick={() => q && handlePick(q)}
                     >
-                      {cost}
+                      {disabled ? "" : cost}
                     </button>
                   );
                 })}

@@ -29,6 +29,13 @@
   text-align: center;
 }
 
+.answer-timer {
+  margin: -8px 0 16px 0;
+  text-align: center;
+  color: rgba(200, 230, 255, 0.75);
+  font-weight: 600;
+}
+
 .answer-question {
   min-height: 72px;
   margin-bottom: 16px;
@@ -64,6 +71,26 @@
   display: flex;
   gap: 12px;
   margin-top: 16px;
+}
+
+.answer-result {
+  margin-top: 14px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(160, 210, 255, 0.3);
+  background: rgba(6, 14, 40, 0.45);
+  text-align: center;
+  font-weight: 600;
+}
+
+.answer-result.ok {
+  border-color: rgba(120, 255, 180, 0.35);
+  color: #aef5c7;
+}
+
+.answer-result.fail {
+  border-color: rgba(255, 140, 140, 0.35);
+  color: #ffb1b1;
 }
 
 .answer-submit,
