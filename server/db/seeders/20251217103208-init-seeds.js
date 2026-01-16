@@ -18,43 +18,184 @@ module.exports = {
     );
 
     await queryInterface.bulkInsert(
-      'Skelets',
+      'Themes',
       [
         {
-          userId: 1,
-          name: 'Один',
-          description: 'Один описание',
-          status: true,
+          title: 'Общие вопросы',
+          desc: 'Вопросы общего характера',
         },
         {
-          userId: 1,
-          name: 'Два',
-          description: 'Два описание',
-          status: false,
+          title: '2',
+          desc: '2описание',
         },
         {
-          userId: 1,
-          name: 'Три',
-          description: 'Три описание',
-          status: false,
+          title: '3',
+          desc: '3описание',
         },
         {
-          userId: 1,
-          name: 'Четыре',
-          description: 'Четыре описание',
-          status: false,
+          title: '4',
+          desc: '4описание',
         },
         {
-          userId: 1,
-          name: 'Пять',
-          description: 'Пять описание',
-          status: true,
+          title: '5',
+          desc: '5описание',
+        },
+      ],
+      {},
+    );
+
+    await queryInterface.bulkInsert(
+      'Questions',
+      [
+        {
+          themesId: 1,
+          question: 'Вопрос',
+          answer: 'Ответ',
+          cost: 100,
         },
         {
-          userId: 1,
-          name: 'Шесть',
-          description: 'Шесть описание',
-          status: false,
+          themesId: 1,
+          question: 'Вопрос',
+          answer: 'Ответ',
+          cost: 200,
+        },
+        {
+          themesId: 1,
+          question: 'Вопрос',
+          answer: 'Ответ',
+          cost: 300,
+        },
+        {
+          themesId: 1,
+          question: 'Вопрос',
+          answer: 'Ответ',
+          cost: 400,
+        },
+        {
+          themesId: 1,
+          question: 'Вопрос',
+          answer: 'Ответ',
+          cost: 500,
+        },
+        {
+          themesId: 2,
+          question: 'Вопрос',
+          answer: 'Ответ',
+          cost: 100,
+        },
+        {
+          themesId: 2,
+          question: 'Вопрос',
+          answer: 'Ответ',
+          cost: 200,
+        },
+        {
+          themesId: 2,
+          question: 'Вопрос',
+          answer: 'Ответ',
+          cost: 300,
+        },
+        {
+          themesId: 2,
+          question: 'Вопрос',
+          answer: 'Ответ',
+          cost: 400,
+        },
+        {
+          themesId: 2,
+          question: 'Вопрос',
+          answer: 'Ответ',
+          cost: 500,
+        },
+        {
+          themesId: 3,
+          question: 'Вопрос',
+          answer: 'Ответ',
+          cost: 100,
+        },
+        {
+          themesId: 3,
+          question: 'Вопрос',
+          answer: 'Ответ',
+          cost: 200,
+        },
+        {
+          themesId: 3,
+          question: 'Вопрос',
+          answer: 'Ответ',
+          cost: 300,
+        },
+        {
+          themesId: 3,
+          question: 'Вопрос',
+          answer: 'Ответ',
+          cost: 400,
+        },
+        {
+          themesId: 3,
+          question: 'Вопрос',
+          answer: 'Ответ',
+          cost: 500,
+        },
+        {
+          themesId: 4,
+          question: 'Вопрос',
+          answer: 'Ответ',
+          cost: 100,
+        },
+        {
+          themesId: 4,
+          question: 'Вопрос',
+          answer: 'Ответ',
+          cost: 200,
+        },
+        {
+          themesId: 4,
+          question: 'Вопрос',
+          answer: 'Ответ',
+          cost: 300,
+        },
+        {
+          themesId: 4,
+          question: 'Вопрос',
+          answer: 'Ответ',
+          cost: 400,
+        },
+        {
+          themesId: 4,
+          question: 'Вопрос',
+          answer: 'Ответ',
+          cost: 500,
+        },
+        {
+          themesId: 5,
+          question: 'Вопрос',
+          answer: 'Ответ',
+          cost: 100,
+        },
+        {
+          themesId: 5,
+          question: 'Вопрос',
+          answer: 'Ответ',
+          cost: 200,
+        },
+        {
+          themesId: 5,
+          question: 'Вопрос',
+          answer: 'Ответ',
+          cost: 300,
+        },
+        {
+          themesId: 5,
+          question: 'Вопрос',
+          answer: 'Ответ',
+          cost: 400,
+        },
+        {
+          themesId: 5,
+          question: 'Вопрос',
+          answer: 'Ответ',
+          cost: 500,
         },
       ],
       {},
@@ -62,7 +203,8 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.bulkDelete('Skelets', null, {});
+    await queryInterface.bulkDelete('Questions', null, {});
+    await queryInterface.bulkDelete('Themes', null, {});
     await queryInterface.bulkDelete('Users', null, {});
   },
 };
