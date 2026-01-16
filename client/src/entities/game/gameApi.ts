@@ -7,9 +7,9 @@ export type ThemeDto = {
 
 export type QuestionDto = {
   id: number;
-  themeId: number; // TODO BACKEND: если у вас themesId — переименуешь тут
+  themeId: number;
   cost: number;
-  isAnswered: boolean; // TODO BACKEND: если приходит иначе — маппинг ниже
+  isAnswered: boolean;
 };
 
 export type BoardDto = {
@@ -18,7 +18,25 @@ export type BoardDto = {
 };
 
 export async function fetchBoard(): Promise<BoardDto> {
-  // TODO BACKEND: endpoint уточните у команды
-  const { data } = await axiosInstance.get<BoardDto>("/api/game/board");
-  return data;
+  const [themesRes, questionsRes] = await Promise.all([
+    axiosInstance.get<ThemeDto[]>("/api/theme"),
+    axiosInstance.get<
+      Array<{
+        id: number;
+        themesId: number;
+        cost: number;
+        isAnswered: boolean | null;
+      }>
+    >("/api/question"),
+  ]);
+
+  return {
+    themes: themesRes.data,
+    questions: questionsRes.data.map((q) => ({
+      id: q.id,
+      themeId: q.themesId,
+      cost: q.cost,
+      isAnswered: Boolean(q.isAnswered),
+    })),
+  };
 }

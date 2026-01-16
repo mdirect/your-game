@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import "./mainPage.css";
 import { fetchBoard, type BoardDto, type QuestionDto } from "../../entities/game/gameApi";
 
-const COSTS = [200, 400, 600, 800, 1000];
+const COSTS = [100, 200, 300, 400, 500];
 
 export default function MainPage() {
   const [board, setBoard] = useState<BoardDto | null>(null);
