@@ -5,6 +5,7 @@ module.exports = (sequelize, DataTypes) => {
   class Question extends Model {
     static associate(models) {
       this.belongsTo(models.Theme, { foreignKey: 'themesId' });
+      this.hasMany(models.AnswerSession, { foreignKey: 'questionId' });
     }
   }
 
