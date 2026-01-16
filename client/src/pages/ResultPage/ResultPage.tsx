@@ -2,7 +2,10 @@ import { useEffect, useState, type JSX } from "react";
 import { useNavigate } from "react-router-dom";
 import "./ResultPage.css";
 import { fetchSessionById, type SessionDto } from "../../entities/game/gameApi";
-import { clearSessionId, getSessionId } from "../../shared/lib/gameSessionStorage";
+import {
+  clearSessionId,
+  getSessionId,
+} from "../../shared/lib/gameSessionStorage";
 import { resetGameTimer } from "../../shared/hooks/useGameTimer";
 
 type ResultPageProps = {

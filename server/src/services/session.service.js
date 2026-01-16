@@ -46,10 +46,7 @@ class SessionService {
     );
 
     if (questionIds.length) {
-      await Question.update(
-        { isAnswered: false },
-        { where: { id: questionIds } },
-      );
+      await Question.update({ isAnswered: false }, { where: { id: questionIds } });
     }
 
     return Session.findByPk(id);

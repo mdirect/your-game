@@ -73,7 +73,13 @@ class AnswerSessionController {
 
       if (answer.dataValues.isAnswered || answer.dataValues.isAnswered === null)
         return res.status(400).send('Вопрос уже отвечен');
-      const isCorrect = answer.dataValues.answer === userAnswer;
+      const normalizedUser = String(userAnswer ?? '')
+        .trim()
+        .toLowerCase();
+      const normalizedCorrect = String(answer.dataValues.answer ?? '')
+        .trim()
+        .toLowerCase();
+      const isCorrect = normalizedUser === normalizedCorrect;
       const updateAnswerSession = await AnswerSessionService.updateAnswerSession(id, {
         userAnswer,
         isCorrect,
