@@ -22,6 +22,12 @@ class QuestionService {
 
     return Question.findByPk(id);
   }
+
+  static async changeStatusIsAnswered(id) {
+    await Question.update({ isAnswered: false }, { where: { id } });
+
+    return Question.findByPk(id);
+  }
 }
 
 module.exports = QuestionService;
