@@ -1,13 +1,13 @@
-const ThemeService = require('../services/skelet.service');
+const ThemeService = require('../services/theme.service');
 const { Theme } = require('../../db/models');
 
 class ThemeController {
   static async getAllThemes(req, res) {
     try {
       const { user } = res.locals;
-      const skelets = await ThemeService.getThemes(user.id);
+      const themes = await ThemeService.getThemes(user.id);
 
-      return res.status(200).send(skelets);
+      return res.status(200).send(themes);
     } catch (error) {
       console.log(error);
       return res.status(500).send('Server Error');
@@ -17,11 +17,11 @@ class ThemeController {
   static async getThemeById(req, res) {
     try {
       const { id } = req.params;
-      const skelet = await ThemeService.getThemeById(id);
+      const theme = await ThemeService.getThemeById(id);
 
-      if (!skelet) return res.status(200).send('Такого скелета нет');
+      if (!theme) return res.status(200).send('Такого скелета нет');
 
-      return res.status(200).send(skelet);
+      return res.status(200).send(theme);
     } catch (error) {
       console.log(error);
       return res.status(500).send('Server Error');
@@ -55,10 +55,10 @@ class ThemeController {
     try {
       const { user } = res.locals;
       const { id } = req.params;
-      const skelet = await ThemeService.getThemeById(id);
+      const theme = await ThemeService.getThemeById(id);
 
-      if (!skelet) return res.status(200).send('Такого скелета нет');
-      if (user.id !== skelet.userId) return res.status(400).send('Это не ваш скелет');
+      if (!theme) return res.status(200).send('Такого скелета нет');
+      if (user.id !== theme.userId) return res.status(400).send('Это не ваш скелет');
       if (!req.body) return res.status(400).send('Заполни данные');
       const { name, description, status } = req.body;
       const { isValid, err } = Theme.validate({ name, description, status });
@@ -81,10 +81,10 @@ class ThemeController {
     try {
       const { user } = res.locals;
       const { id } = req.params;
-      const skelet = await ThemeService.getThemeById(id);
+      const theme = await ThemeService.getThemeById(id);
 
-      if (!skelet) return res.status(200).send('Такого скелета нет');
-      if (user.id !== skelet.userId) return res.status(400).send('Это не ваш скелет');
+      if (!theme) return res.status(200).send('Такого скелета нет');
+      if (user.id !== theme.userId) return res.status(400).send('Это не ваш скелет');
       const deleteTheme = await ThemeService.deleteTheme(id);
 
       if (!deleteTheme) return res.status(200).send('Скелет не удален');

@@ -1,5 +1,5 @@
 const express = require('express');
-const ThemeController = require('../controllers/skelet.controller');
+const ThemeController = require('../controllers/theme.controller');
 const { verifyAccessToken } = require('../middlewares/verifyTokens');
 const isValidId = require('../middlewares/isValidId');
 
