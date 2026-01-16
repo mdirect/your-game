@@ -5,6 +5,7 @@ import Layout from "./app/Layout/Layout";
 import MainPage from "./pages/MainPage/MainPage";
 import RegisterPage from "./pages/RegisterPage/RegisterPage";
 import LoginPage from "./pages/LoginPage/LoginPage";
+import PageAnswer from "./pages/pageAnswer/PageAnswer";
 
 export default function App() {
   return (
@@ -15,6 +16,7 @@ export default function App() {
         <Route path="/login" element={<LoginPage />} />
         <Route element={<Layout />}>
           <Route path="/game" element={<MainPage />} />
+          <Route path="/question/:themesId/:cost" element={<PageAnswer />} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -17,6 +17,16 @@ export type BoardDto = {
   questions: QuestionDto[];
 };
 
+export type QuestionDetailsDto = {
+  id: number;
+  themesId: number;
+  question: string;
+  answer: string;
+  cost: number;
+  isAnswered: boolean;
+  image?: string | null;
+};
+
 export async function fetchBoard(): Promise<BoardDto> {
   const [themesRes, questionsRes] = await Promise.all([
     axiosInstance.get<ThemeDto[]>("/api/theme"),
@@ -39,4 +49,15 @@ export async function fetchBoard(): Promise<BoardDto> {
       isAnswered: Boolean(q.isAnswered),
     })),
   };
+}
+
+export async function fetchQuestionByThemeAndCost(
+  themesId: number,
+  cost: number
+): Promise<QuestionDetailsDto | null> {
+  const { data } = await axiosInstance.get<QuestionDetailsDto[]>(
+    `/api/question/theme/${themesId}/cost/${cost}`
+  );
+
+  return data?.[0] ?? null;
 }

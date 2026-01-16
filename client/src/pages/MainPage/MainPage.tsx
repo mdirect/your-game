@@ -1,10 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "./mainPage.css";
 import { fetchBoard, type BoardDto, type QuestionDto } from "../../entities/game/gameApi";
 
 const COSTS = [100, 200, 300, 400, 500];
 
 export default function MainPage() {
+  const navigate = useNavigate();
   const [board, setBoard] = useState<BoardDto | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -25,8 +27,7 @@ export default function MainPage() {
   }, [board]);
 
   function handlePick(q: QuestionDto) {
-    // TODO ROUTER: navigate(`/question/${q.id}`)
-    console.log("pick:", q);
+    navigate(`/question/${q.themeId}/${q.cost}`);
   }
 
   function handleTimerClick() {
