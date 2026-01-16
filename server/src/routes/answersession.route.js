@@ -1,5 +1,5 @@
 const express = require('express');
-const AnswerSessionController = require('../controllers/answerSession.controller');
+const AnswerSessionController = require('../controllers/answersession.controller');
 const isValidId = require('../middlewares/isValidId');
 
 const router = express.Router();

@@ -1,4 +1,5 @@
-const AnswerSessionService = require('../services/answerSession.service');
+const AnswerSessionService = require('../services/answersession.service');
+const QuestionService = require('../services/question.service');
 
 class AnswerSessionController {
   static async getAllAnswerSessions(req, res) {
@@ -66,10 +67,20 @@ class AnswerSessionController {
       if (!req.body) return res.status(400).send('Заполни данные');
 
       const { userAnswer } = req.body;
-      // TODO: заполнение колонок isCorrect и answerScore
+      const answer = await QuestionService.getQuestionById(
+        answerSession.dataValues.questionId,
+      );
+
+      if (answer.dataValues.isAnswered || answer.dataValues.isAnswered === null)
+        return res.status(400).send('Вопрос уже отвечен');
+      const isCorrect = answer.dataValues.answer === userAnswer;
       const updateAnswerSession = await AnswerSessionService.updateAnswerSession(id, {
         userAnswer,
+        isCorrect,
+        answerScore: isCorrect ? answer.dataValues.cost : -1 * answer.dataValues.cost,
       });
+
+      await QuestionService.isAnswered(answerSession.dataValues.questionId);
 
       return res.status(200).json(updateAnswerSession);
     } catch (error) {

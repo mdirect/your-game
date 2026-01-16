@@ -16,6 +16,12 @@ class QuestionService {
   static async getQuestionByThemeAndCost(themesId, cost) {
     return Question.findAll({ where: { themesId, cost } });
   }
+
+  static async isAnswered(id) {
+    await Question.update({ isAnswered: true }, { where: { id } });
+
+    return Question.findByPk(id);
+  }
 }
 
 module.exports = QuestionService;
