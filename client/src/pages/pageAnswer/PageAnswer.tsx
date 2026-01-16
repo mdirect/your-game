@@ -10,8 +10,6 @@ import {
 import { resetGameTimer, useGameTimer } from "../../shared/hooks/useGameTimer";
 import {
   getSessionId,
-  markAnsweredCell,
-  recordAnswer,
   setSessionId,
 } from "../../shared/lib/gameSessionStorage";
 
@@ -99,20 +97,13 @@ export default function PageAnswer(): JSX.Element {
         Number(sessionId),
         questionState.questionId
       );
-      await updateAnswerSession(created.id, answer.trim());
+      const updated = await updateAnswerSession(created.id, answer.trim());
+      setIsCorrect(Boolean(updated?.isCorrect));
     } catch (_) {
-      // даже если бек упал — отмечаем локально
+      const normalized = answer.trim().toLowerCase();
+      const correct = questionState.answer.trim().toLowerCase();
+      setIsCorrect(normalized === correct);
     }
-
-    if (themesId && cost) {
-      markAnsweredCell(sessionId, Number(themesId), Number(cost));
-    }
-
-    const normalized = answer.trim().toLowerCase();
-    const correct = questionState.answer.trim().toLowerCase();
-    const success = normalized === correct;
-    recordAnswer(sessionId, success);
-    setIsCorrect(success);
     setIsSubmitted(true);
   }
 

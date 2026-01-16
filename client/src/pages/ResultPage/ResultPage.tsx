@@ -1,6 +1,7 @@
-import { type JSX } from "react";
+import { useEffect, useState, type JSX } from "react";
 import "./ResultPage.css";
-import { getSessionId, loadSessionStats } from "../../shared/lib/gameSessionStorage";
+import { fetchSessionById, type SessionDto } from "../../entities/game/gameApi";
+import { getSessionId } from "../../shared/lib/gameSessionStorage";
 
 type ResultPageProps = {
   playerName?: string;
@@ -18,11 +19,29 @@ export default function ResultPage({
   onRestart,
 }: ResultPageProps): JSX.Element {
   const sessionId = getSessionId();
-  const stats = sessionId ? loadSessionStats(sessionId) : null;
+  const [session, setSession] = useState<SessionDto | null>(null);
 
-  const total = totalQuestions ?? stats?.totalQuestions ?? 0;
-  const correct = correctAnswers ?? stats?.correctAnswered ?? 0;
-  const timeSeconds = time ?? stats?.timeSeconds ?? 0;
+  useEffect(() => {
+    if (!sessionId) return;
+    fetchSessionById(sessionId)
+      .then((data) => setSession(data))
+      .catch(() => setSession(null));
+  }, [sessionId]);
+
+  const total = totalQuestions ?? session?.totalAnswers ?? 0;
+  const correct = correctAnswers ?? session?.rigthQuestion ?? 0;
+  const timeSeconds =
+    time ??
+    (session?.startTime && session?.endTime
+      ? Math.max(
+          0,
+          Math.round(
+            (new Date(session.endTime).getTime() -
+              new Date(session.startTime).getTime()) /
+              1000
+          )
+        )
+      : 0);
 
   const percentage = total ? Math.round((correct / total) * 100) : 0;
   const minutes = Math.floor(timeSeconds / 60);

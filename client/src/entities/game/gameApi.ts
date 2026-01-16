@@ -107,3 +107,30 @@ export async function updateAnswerSession(
   );
   return data;
 }
+
+export async function fetchAnswerSessionsBySessionId(
+  sessionId: number | string
+): Promise<AnswerSessionDto[]> {
+  const { data } = await axiosInstance.get<AnswerSessionDto[]>(
+    `/api/answersession/session/${sessionId}`
+  );
+  return data;
+}
+
+export async function fetchSessionById(
+  sessionId: number | string
+): Promise<SessionDto> {
+  const { data } = await axiosInstance.get<SessionDto>(
+    `/api/session/${sessionId}`
+  );
+  return data;
+}
+
+export async function finalizeSession(
+  sessionId: number | string
+): Promise<SessionDto> {
+  const { data } = await axiosInstance.put<SessionDto>(
+    `/api/session/${sessionId}`
+  );
+  return data;
+}

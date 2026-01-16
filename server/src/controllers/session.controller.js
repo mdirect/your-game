@@ -50,14 +50,7 @@ class SessionController {
 
       if (!session) return res.status(200).send('Такой сессии нет');
       if (user.id !== session.userId) return res.status(400).send('Это не ваша сессия');
-      // TODO:     добавить заполнение колонок endTime, score, rigthQuestion, totalAnswers 
-
-      const updateSession = await SessionService.updateSession(id, {
-        score: 1000,
-        endTime: Date.now(),
-        rigthQuestion: 10,
-        totalAnswers: 25,
-      });
+      const updateSession = await SessionService.finalizeSession(id);
 
       return res.status(200).json(updateSession);
     } catch (error) {

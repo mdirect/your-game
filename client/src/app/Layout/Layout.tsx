@@ -3,12 +3,7 @@ import { useEffect, useState } from "react";
 
 import Navigation from "../../widgets/Navigation/Navigation";
 import axiosInstance, { setAccessToken } from "../../shared/lib/axiosInstance";
-import {
-  clearAnsweredCells,
-  clearSessionId,
-  getSessionId,
-} from "../../shared/lib/gameSessionStorage";
-import { resetGameTimer } from "../../shared/hooks/useGameTimer";
+import { clearSessionId } from "../../shared/lib/gameSessionStorage";
 
 type User = {
   id: number;
@@ -45,11 +40,6 @@ export default function Layout() {
     } catch (_) {
       // даже если бек упал — локально чистим
     } finally {
-      const existingSessionId = getSessionId();
-      if (existingSessionId) {
-        clearAnsweredCells(existingSessionId);
-        resetGameTimer(existingSessionId);
-      }
       clearSessionId();
       setAccessToken("");
       setUser(null);

@@ -3,18 +3,15 @@ import { useNavigate } from "react-router-dom";
 import "./mainPage.css";
 import {
   createSession,
+  fetchAnswerSessionsBySessionId,
   fetchBoard,
+  finalizeSession,
   type BoardDto,
   type QuestionDto,
 } from "../../entities/game/gameApi";
 import { resetGameTimer, useGameTimer } from "../../shared/hooks/useGameTimer";
 import {
-  clearAnsweredCells,
-  clearSessionStats,
   getSessionId,
-  loadAnsweredCells,
-  setTimeSeconds,
-  setTotalQuestions,
   setSessionId,
 } from "../../shared/lib/gameSessionStorage";
 
@@ -29,6 +26,7 @@ export default function MainPage() {
   const [board, setBoard] = useState<BoardDto | null>(null);
   const [loading, setLoading] = useState(true);
   const [answeredCells, setAnsweredCells] = useState<Set<string>>(new Set());
+  const [isFinalizing, setIsFinalizing] = useState(false);
 
   useEffect(() => {
     fetchBoard()
@@ -40,7 +38,6 @@ export default function MainPage() {
     const existing = getSessionId();
     if (existing) {
       setSessionIdState(existing);
-      setAnsweredCells(loadAnsweredCells(existing));
       return;
     }
 
@@ -49,42 +46,44 @@ export default function MainPage() {
         setSessionId(session.id);
         setSessionIdState(String(session.id));
         resetGameTimer(session.id);
-        clearAnsweredCells(String(session.id));
-        clearSessionStats(String(session.id));
         setAnsweredCells(new Set());
       })
       .catch(() => {
         // если не смогли создать сессию — оставим текущую, если есть
         const fallback = getSessionId();
         setSessionIdState(fallback);
-        if (fallback) {
-          setAnsweredCells(loadAnsweredCells(fallback));
-        }
       });
   }, []);
 
   useEffect(() => {
-    if (sessionId) {
-      setAnsweredCells(loadAnsweredCells(sessionId));
-    }
-  }, [sessionId]);
+    if (!sessionId || !board) return;
+    fetchAnswerSessionsBySessionId(sessionId)
+      .then((answers) => {
+        const answered = new Set<string>();
+        const byId = new Map(board.questions.map((q) => [q.id, q]));
+        for (const a of answers) {
+          if (!a.userAnswer) continue;
+          const q = byId.get(a.questionId);
+          if (!q) continue;
+          answered.add(`${q.themeId}:${q.cost}`);
+        }
+        setAnsweredCells(answered);
+      })
+      .catch(() => {
+        setAnsweredCells(new Set());
+      });
+  }, [sessionId, board]);
 
   useEffect(() => {
-    if (!board || !sessionId) return;
+    if (!board || !sessionId || isFinalizing) return;
     const totalQuestions = board.questions.length;
-    if (totalQuestions > 0) {
-      setTotalQuestions(sessionId, totalQuestions);
+    if (totalQuestions > 0 && answeredCells.size >= totalQuestions) {
+      setIsFinalizing(true);
+      finalizeSession(sessionId)
+        .catch(() => {})
+        .finally(() => navigate("/result"));
     }
-
-    if (answeredCells.size >= totalQuestions && totalQuestions > 0) {
-      const spentSeconds = Math.max(
-        0,
-        Math.round((20 * 60 * 1000 - remainingMs) / 1000)
-      );
-      setTimeSeconds(sessionId, spentSeconds);
-      navigate("/result");
-    }
-  }, [board, sessionId, answeredCells, remainingMs, navigate]);
+  }, [board, sessionId, answeredCells, isFinalizing, navigate]);
 
   // быстрый доступ к question по (themeId+cost)
   const qMap = useMemo(() => {
