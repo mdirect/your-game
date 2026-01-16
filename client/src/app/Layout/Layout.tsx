@@ -41,7 +41,7 @@ export default function Layout() {
     } finally {
       setAccessToken("");
       setUser(null);
-      navigate("/auth");
+      navigate("/register");
     }
   }
 
